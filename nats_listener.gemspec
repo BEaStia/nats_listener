@@ -9,8 +9,14 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Igor Pavlov"]
   spec.email         = ["gophan1992@gmail.com"]
 
-  spec.summary       = %q{Write a short summary, because RubyGems requires one.}
-  spec.description   = %q{Write a longer description or delete this line.}
+  spec.summary       = %q{
+    This gem is used to simplify interaction between big applications/services via nats.
+  }
+  spec.description   = %q{
+    Once upon a time in faraway company three developers decided to use nats for messaging between services.
+    One of them started to integrate nats, met some problems, was fighting with them and as a result he had created this gem.
+    This gem can help you to integrate nats and simplify its usage.
+  }
   spec.homepage      = "https://github.com/beastia/nats_listener"
   spec.license       = "MIT"
 
