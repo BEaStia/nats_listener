@@ -3,7 +3,7 @@ require 'nats/io/client'
 module NatsListener
   class Client
 
-    attr_reader :service_name
+    attr_reader :service_name, :logger, :skip, :catch_errors, :catch_provider
 
     def self.current
       @current ||= NatsListener::Client.new
@@ -13,11 +13,22 @@ module NatsListener
       @current = value
     end
 
-    def initialize
+    # Use this opts:
+    # @!attribute logger - logger used in this service
+    # @!attribute skip - flag attribute used to skip connections(useful for testing)
+    # @!attribute catch_errors - used to catch errors around subscribers/connections(be careful with it!)
+    # @!attribute catch_provider - this class will be called with catch_provider.error(e)
+
+    def initialize(opts = {})
       @nats = ::NATS::IO::Client.new # Create nats client
+      @logger = opts[:logger]
+      @skip = opts[:skip] || false
+      @catch_errors = opts[:catch_errors] || false
+      @catch_provider = opts[:catch_provider]
     end
 
     def establish_connection(config)
+      return if skip
       @nats.connect(config) # Connect nats to provided configuration
       @service_name = config[:service_name]
     end
@@ -37,24 +48,42 @@ module NatsListener
     end
 
     # Raw method to publish subject to data
-    def publish(subject, data)
+    def publish(subject, message)
       with_connection do
-        @nats.publish(subject, data)
+        log(action: :publish, message: message)
+        @nats.publish(subject, message)
       end
     end
 
     def request(subject, message, opts = {})
       with_connection do
+        log(action: :request, message: message)
         @nats.request(subject, message, opts)
       end
+    end
+
+    def log(action:, message:)
+      logger.log(service: client.service_name, action: action, message: message) if logger
     end
 
     private
 
     def with_connection
-      servers = ENV.fetch('NATS_SERVERS', 'nats://127.0.0.1:4222').split(',')
-      establish_connection(servers: servers) if @nats.status.zero?
-      yield
+      return if skip
+      begin
+        if @nats.status.zero?
+          servers = ENV.fetch('NATS_SERVERS', 'nats://127.0.0.1:4222').split(',')
+          establish_connection(servers: servers)
+        end
+        yield
+      rescue StandardError => exception
+        if catch_errors
+          log(action: :error, message: exception)
+          catch_provider.error(exception) if catch_provider
+        else
+          raise exception
+        end
+      end
     end
   end
 end

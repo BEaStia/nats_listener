@@ -43,11 +43,22 @@ module NatsListener
     def subscribe
       # Create subscription and delete after its finished if not infinitive
       @sid = NatsListener::Client.current.subscribe(@subject) do |msg, reply, subject|
-        if @count.positive? || @infinitive
-          call(msg, reply, subject)
-          @count -= 1 unless @infinitive
-        else
-          NatsListener::Client.current.unsubscribe(@sid)
+        begin
+          client = NatsListener::Client.current
+          client.log(action: :received, message: msg)
+          if @count.positive? || @infinitive
+            call(msg, reply, subject)
+            @count -= 1 unless @infinitive
+          else
+            client.unsubscribe(@sid)
+          end
+        rescue StandardError => exception
+          if client.catch_errors
+            client.log(action: :error, message: msg)
+            client.catch_provider.error(exception) if client.catch_provider
+          else
+            raise exception
+          end
         end
       end
     end

@@ -41,6 +41,21 @@ For usage in your project we offer:
  => "{\"publisher\":service1,\"timestamp\":\"2018-10-07T09:00:29.133Z\",\"message_id\":\"7dfc4de9-d920-4cc1-8cfe-5e85f7fb855d\",\"data\":{\"action\":\"ololo\"}}" 
 ```
 
+### Creating client
+```ruby
+NatsListener::Client.current = NatsListener::Client.new(
+  logger: Ougai::Logger.new(STDOUT),
+  skip: false,
+  catch_errors: true,
+  catch_provider: Rollbar
+)
+```
+All arguments are optional.
+`logger` - logger that you can pass to application. It will be called to debug messages.
+`skip` - skip calls. Useful for tests
+`catch_errors` - catch errors, log them and pass to `catch_provider`
+`catch_provider` - provider that is called when error occurs, e.g. Rollbar.
+
 ### Subscribers
 
 For using subscribers we offer one quite simple way:
@@ -48,7 +63,13 @@ For using subscribers we offer one quite simple way:
 2. Create your own subscriber derived from `NatsListener::Subscriber` 
 3. Load and subscribe all subscribers, e.g.
 ```ruby
-NatsListener.current.establish_connection(service_name: [YOUR SERVICE NAME], servers: [NATS_SERVERS_URLS])
+NatsListener::Client.current = NatsListener::Client.new(
+  logger: Ougai::Logger.new(STDOUT),
+  skip: false,
+  catch_errors: true,
+  catch_provider: Rollbar
+)
+NatsListener::Client.current.establish_connection(service_name: [YOUR SERVICE NAME], servers: [NATS_SERVERS_URLS])
 path = Rails.root.join('app', 'subscribers', '*.rb')
 Dir.glob(path) do |entry|
   entry.split('/').last.split('.').first.camelize.constantize.new.subscribe
