@@ -40,7 +40,7 @@ module NatsListener
       @infinitive = true if @count.zero?
     end
 
-    def subscribe
+    def subscribe(_opts = {})
       # Create subscription and delete after its finished if not infinitive
       @sid = NatsListener::Client.current.subscribe(@subject) do |msg, reply, subject|
         begin
