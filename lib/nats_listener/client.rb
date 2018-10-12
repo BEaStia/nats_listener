@@ -18,9 +18,10 @@ module NatsListener
     # @!attribute skip - flag attribute used to skip connections(useful for testing)
     # @!attribute catch_errors - used to catch errors around subscribers/connections(be careful with it!)
     # @!attribute catch_provider - this class will be called with catch_provider.error(e)
+    # @!attribute disable_nats - if something is passed to that attribute - nats won't be initialized
 
     def initialize(opts = {})
-      @nats = ::NATS::IO::Client.new # Create nats client
+      @nats = ::NATS::IO::Client.new unless opts[:disable_nats].present? # Create nats client
       @logger = opts[:logger]
       @skip = opts[:skip] || false
       @catch_errors = opts[:catch_errors] || false
