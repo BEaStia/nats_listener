@@ -40,5 +40,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_dependency 'nats-pure'
-  spec.add_dependency 'protobuf'
+  spec.add_dependency 'google-protobuf'
 end
