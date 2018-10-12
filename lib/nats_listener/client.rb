@@ -1,5 +1,4 @@
 require 'nats/io/client'
-require 'stan/client'
 
 module NatsListener
   class Client
