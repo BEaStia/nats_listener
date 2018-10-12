@@ -41,4 +41,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rspec", "~> 3.0"
   spec.add_dependency 'nats-pure'
   spec.add_dependency 'google-protobuf'
+  spec.add_dependency 'nats-streaming'
 end
