@@ -82,7 +82,9 @@ end
 Right now nats functionality is proved to work aside of Puma workers because of the conflicts between `puma` and `nats-pure` gems.
 
 
-
+# TODO:
+1. Add nats-streaming subscribers
+2. Add usage of nats-streaming for calls
 
 
 ## Development
