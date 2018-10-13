@@ -1,3 +1,4 @@
+require 'stan/client'
 require 'nats/io/client'
 
 module NatsListener
@@ -19,9 +20,11 @@ module NatsListener
     # @!attribute catch_errors - used to catch errors around subscribers/connections(be careful with it!)
     # @!attribute catch_provider - this class will be called with catch_provider.error(e)
     # @!attribute disable_nats - if something is passed to that attribute - nats won't be initialized
+    # # @!attribute disable_stan - if something is passed to that attribute - nats-streaming won't be initialized
 
     def initialize(opts = {})
       @nats = ::NATS::IO::Client.new unless opts[:disable_nats].present? # Create nats client
+      @stan = ::STAN::Client.new unless opts[:disable_stan].present? # Create nats-streaming client if necessary
       @logger = opts[:logger]
       @skip = opts[:skip] || false
       @catch_errors = opts[:catch_errors] || false
