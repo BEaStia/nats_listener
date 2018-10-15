@@ -1,29 +1,18 @@
 # encoding: utf-8
 
-##
-# This file is auto-generated. DO NOT EDIT!
-#
-require 'protobuf'
+require 'google/protobuf'
+
+Google::Protobuf::DescriptorPool.generated_pool.build do
+  add_message "NatsListener.NatsMessage" do
+    optional :sender_service_name, :string, 1
+    optional :receiver_action_name, :string, 2
+    repeated :receiver_action_parameters, :string, 3
+    optional :message_timestamp, :int64, 4
+    optional :transaction_id, :string, 5
+  end
+end
 
 module NatsListener
-  ::Protobuf::Optionable.inject(self) { ::Google::Protobuf::FileOptions }
-
-  ##
-  # Message Classes
-  #
-  class NatsMessage < ::Protobuf::Message; end
-
-
-  ##
-  # Message Fields
-  #
-  class NatsMessage
-    required :string, :sender_service_name, 1
-    required :string, :receiver_action_name, 2
-    repeated :string, :receiver_action_parameters, 3
-    required :int64, :message_timestamp, 4
-    required :string, :transaction_id, 5
-  end
-
+  NatsMessage = Google::Protobuf::DescriptorPool.generated_pool.lookup('NatsListener.NatsMessage').msgclass
 end
 
