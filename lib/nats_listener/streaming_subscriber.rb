@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-module NatsStreamingListener
-  class Subscriber
+module NatsListener
+  class StreamingSubscriber
     # It's just a small example of subscriber usage:
     #
-    # class TestSubscriber < Subscriber
+    # class TestSubscriber < StreamingSubscriber
     #   subject 'test'
     #   count 1
     #
