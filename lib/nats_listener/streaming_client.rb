@@ -49,11 +49,10 @@ module NatsListener
     end
 
     def reestablish_connection
-      # if @nats.status.zero?
-      #   servers = ENV.fetch('NATS_SERVERS', 'nats://127.0.0.1:4222').split(',')
-      #   establish_connection(servers: servers)
-      # end
-      p @nats
+      if nats.nats.status.zero?
+        servers = ENV.fetch('NATS_SERVERS', 'nats://127.0.0.1:4223').split(',')
+        establish_connection(servers: servers, service_name: @service_name, client_id: @client_id)
+      end
     end
   end
 end
