@@ -3,7 +3,7 @@ module NatsListener
     attr_reader :service_name, :logger, :skip, :catch_errors, :catch_provider, :nats
 
     def log(action:, message:)
-      logger.log(service: client.service_name, action: action, message: message) if logger
+      logger.log(service: service_name, action: action, message: message) if logger
     end
 
     def with_connection
