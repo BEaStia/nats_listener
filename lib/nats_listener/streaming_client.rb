@@ -29,6 +29,7 @@ module NatsListener
 
     def establish_connection(config)
       return if skip
+      @config = config
       @service_name = config[:service_name]
       @client_id = config[:client_id]
       begin
@@ -49,10 +50,7 @@ module NatsListener
     end
 
     def reestablish_connection
-      if nats.nats.status.zero?
-        servers = ENV.fetch('NATS_SERVERS', 'nats://127.0.0.1:4223').split(',')
-        establish_connection(servers: servers, service_name: @service_name, client_id: @client_id)
-      end
+      establish_connection(@config) if nats.nats.status.zero?
     end
   end
 end
