@@ -45,7 +45,7 @@ module NatsListener
       @sid = NatsListener::StreamingClient.current.subscribe(@subject, opts) do |msg, reply, subject|
         begin
           client = NatsListener::StreamingClient.current
-          client.log(action: :received, message: msg)
+          client.log(action: :received, message: msg.data)
           if @count.positive? || @infinitive
             call(msg, reply, subject)
             @count -= 1 unless @infinitive
@@ -54,7 +54,7 @@ module NatsListener
           end
         rescue StandardError => exception
           if client.catch_errors
-            client.log(action: :error, message: msg)
+            client.log(action: :error, message: msg.data)
             client.catch_provider.error(exception) if client.catch_provider
           else
             raise exception
