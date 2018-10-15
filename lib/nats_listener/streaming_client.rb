@@ -1,10 +1,11 @@
-require 'nats/io/client'
+require 'stan/client'
 require_relative './abstract_client'
 
 module NatsListener
-  class Client < AbstractClient
+  class StreamingClient < AbstractClient
+
     def self.current
-      @current ||= NatsListener::Client.new
+      @current ||= NatsListener::StreamingClient.new
     end
 
     def self.current=(value)
@@ -19,7 +20,7 @@ module NatsListener
     # @!attribute disable_nats - if something is passed to that attribute - nats won't be initialized
 
     def initialize(opts = {})
-      @nats = ::NATS::IO::Client.new unless opts[:disable_nats] # Create nats client
+      @nats = STAN::Client.new unless opts[:disable_nats] # Create nats client
       @logger = opts[:logger]
       @skip = opts[:skip] || false
       @catch_errors = opts[:catch_errors] || false
@@ -28,8 +29,16 @@ module NatsListener
 
     def establish_connection(config)
       return if skip
-      @nats.connect(config) # Connect nats to provided configuration
       @service_name = config[:service_name]
+      @client_id = config[:client_id]
+      begin
+        @nats.connect(@client_id, "#{@service_name}-#{@client_id}", config) # Connect nats to provided configuration
+      rescue STAN::ConnectError => e
+        log(action: :connection_failed, message: e)
+        opts = config.dup
+        opts[:client_id] = @client_id.to_i + 1
+        establish_connection(opts)
+      end
     end
 
     def request(subject, message, opts = {})
@@ -40,10 +49,11 @@ module NatsListener
     end
 
     def reestablish_connection
-      if @nats.status.zero?
-        servers = ENV.fetch('NATS_SERVERS', 'nats://127.0.0.1:4222').split(',')
-        establish_connection(servers: servers)
-      end
+      # if @nats.status.zero?
+      #   servers = ENV.fetch('NATS_SERVERS', 'nats://127.0.0.1:4222').split(',')
+      #   establish_connection(servers: servers)
+      # end
+      p @nats
     end
   end
 end

@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module NatsListener
+module NatsStreamingListener
   class Subscriber
     # It's just a small example of subscriber usage:
     #
@@ -42,9 +42,9 @@ module NatsListener
 
     def subscribe(opts = {})
       # Create subscription and delete after its finished if not infinitive
-      @sid = NatsListener::Client.current.subscribe(@subject, opts) do |msg, reply, subject|
+      @sid = NatsStreamingListener::Client.current.subscribe(@subject, opts) do |msg, reply, subject|
         begin
-          client = NatsListener::Client.current
+          client = NatsStreamingListener::Client.current
           client.log(action: :received, message: msg)
           if @count.positive? || @infinitive
             call(msg, reply, subject)

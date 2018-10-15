@@ -1,10 +1,13 @@
 module NatsListener
   class Message
     attr_reader :message
-    delegate :to_json, to: :message
 
     def initialize(data)
       @message = build_message(data)
+    end
+
+    def to_json
+      message.to_json
     end
 
     private
