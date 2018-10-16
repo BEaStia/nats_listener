@@ -7,8 +7,8 @@ module NatsListener
       @current ||= NatsListener::Client.new
     end
 
-    def self.current=(value)
-      @current = value
+    class << self
+      attr_writer :current
     end
 
     # Use this opts:
