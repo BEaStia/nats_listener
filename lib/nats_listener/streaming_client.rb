@@ -27,17 +27,17 @@ module NatsListener
       @catch_provider = opts[:catch_provider]
     end
 
-    def establish_connection(config)
+    def establish_connection(config = {})
       return if skip
-      @config = config
-      @service_name = config[:service_name]
-      @client_id = config[:client_id]
+      @config = config.to_h
+      @service_name = @config.fetch(:service_name) { :service }
+      @client_id = @config.fetch(:client_id) { :client_id }
       begin
-        @nats.connect(@client_id, "#{@service_name}-#{@client_id}", config) # Connect nats to provided configuration
+        @nats.connect(@client_id, "#{@service_name}-#{@client_id}", @config) # Connect nats to provided configuration
       rescue STAN::ConnectError => e
         log(action: :connection_failed, message: e)
-        opts = config.dup
-        opts[:client_id] = @client_id.to_i + 1
+        opts = @config.dup
+        opts[:service_name] = "#{@service_name}-1"
         establish_connection(opts)
       end
     end
@@ -50,7 +50,7 @@ module NatsListener
     end
 
     def reestablish_connection
-      establish_connection(@config) if nats.nats.status.zero?
+      establish_connection(@config) if nats&.nats&.status.to_i.zero?
     end
   end
 end

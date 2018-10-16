@@ -33,7 +33,11 @@ RSpec.describe NatsListener::StreamingClient do
 
   describe '#subscribe' do
     let(:service_name) { 'service_1' }
-    let(:client) { described_class.new(cluster_name: 'worki_cluster') }
+    let(:client) do
+      client = described_class.new
+      client.establish_connection(client_id: 'client_id', service_name: 'client_id', nats: { servers: ['nats://127.0.0.1:4223']})
+      client
+    end
     let(:topic) { 'topic' }
 
     subject do
@@ -41,7 +45,6 @@ RSpec.describe NatsListener::StreamingClient do
     end
 
     it 'should not fail' do
-      # This test will fail if real nats is not working. To run it use ```docker run -p 4444:4444 -p 4222:4222 nats -p 4444```
       expect { subject }.not_to raise_exception
     end
 

@@ -1,5 +1,15 @@
-require "bundler/setup"
-require "nats_listener"
+require 'bundler/setup'
+
+token = ENV.fetch('CODECOV_TOKEN') { nil }
+unless token.nil?
+  require 'simplecov'
+  SimpleCov.start
+
+  require 'codecov'
+  SimpleCov.formatter = SimpleCov::Formatter::Codecov
+end
+
+require 'nats_listener'
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
