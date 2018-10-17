@@ -81,4 +81,29 @@ RSpec.describe NatsListener::StreamingClient do
       end
     end
   end
+
+  describe '#request' do
+    let(:service_name) { 'service_1' }
+    let(:client) do
+      client = described_class.new
+      client.establish_connection(
+        client_id: 'client_id',
+        cluster_name: 'cluster_name',
+        service_name: 'client_id',
+        nats: { servers: ['nats://127.0.0.1:4223']}
+      )
+      client
+    end
+    let(:topic) { 'topic' }
+
+    before do
+      allow_any_instance_of(::STAN::Client).to receive(:connect).and_return(true)
+      allow_any_instance_of(::STAN::Client).to receive(:request).and_return(true)
+    end
+    subject { client.request(topic, 'Hi, there!', {}) }
+
+    it 'should call #with_connection' do
+      expect { subject }.not_to raise_exception
+    end
+  end
 end
