@@ -6,6 +6,10 @@ require_relative './client_catcher'
 module NatsListener
   # Abstract client for nats and nats-streaming connections
   class AbstractClient
+    def self.current
+      @current ||= self.class.new
+    end
+
     def self.current=(value)
       @current = value
     end
@@ -14,10 +18,10 @@ module NatsListener
 
     def log(action:, message:)
       logger.log(
-        service: service_name,
         action: action,
-        message: message
-      )
+        message: message,
+        service_name: service_name,
+        )
     end
 
     def with_connection

@@ -6,9 +6,6 @@ require_relative './abstract_client'
 module NatsListener
   # Implementation of Nats-streaming client
   class StreamingClient < AbstractClient
-    def self.current
-      @current ||= NatsListener::StreamingClient.new
-    end
 
     # Use this opts:
     # @!attribute :logger - logger used in this service
@@ -38,7 +35,7 @@ module NatsListener
         # Connect nats to provided configuration
         nats.connect(cluster_name, client_name, config)
         true
-      rescue STAN::ConnectError => exception
+      rescue StandardError => exception
         log(action: :connection_failed, message: exception)
         false
       end

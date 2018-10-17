@@ -22,12 +22,29 @@ RSpec.describe NatsListener::StreamingClient do
     let(:service_name) { 'service_1' }
     let(:client) { described_class.new }
 
-    before { allow_any_instance_of(::STAN::Client).to receive(:connect).and_return(true) }
-
     subject { client.establish_connection(service_name: service_name) }
 
-    it 'should set service name' do
-      expect { subject }.to change { client.service_name }.from(nil)
+    context 'without errors' do
+      before { allow_any_instance_of(::STAN::Client).to receive(:connect).and_return(true) }
+
+      it 'should set service name' do
+        expect { subject }.to change { client.service_name }.from(nil)
+      end
+
+      it 'should return true' do
+        expect(subject).to be_truthy
+      end
+    end
+
+    context 'with received error' do
+      before do
+        allow_any_instance_of(::STAN::Client).to receive(:connect).and_raise(StandardError.new)
+        allow(client).to receive(:log).and_return(true)
+      end
+
+      it 'should raise error' do
+        expect(subject).to be_falsey
+      end
     end
   end
 
