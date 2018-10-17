@@ -11,7 +11,7 @@ module NatsListener
     end
 
     def call(exception)
-      raise exception unless catch_errors
+      raise exception unless catch_error
 
       catch_provider.error(exception)
     end

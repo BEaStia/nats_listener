@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 RSpec.describe NatsListener::Client do
-  describe '.current' do
+  describe '.initialize' do
     context 'with mock' do
       let(:new_client) { NatsListener::Client.new }
       before { allow(NatsListener::Client).to receive(:current).and_return(new_client) }
