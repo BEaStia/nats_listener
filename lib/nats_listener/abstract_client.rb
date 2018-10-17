@@ -6,18 +6,26 @@ module NatsListener
       logger.info(service: service_name, action: action, message: message) if logger
     end
 
+    def error(exception)
+      client.catch_provider.error(exception) if client.catch_provider
+    end
+
     def with_connection
       return if skip
       begin
         reestablish_connection
         yield
       rescue StandardError => exception
-        if catch_errors
-          log(action: :error, message: exception)
-          catch_provider.error(exception) if catch_provider
-        else
-          raise exception
-        end
+        on_rescue(exception)
+      end
+    end
+
+    def on_rescue(exception)
+      if catch_errors
+        log(action: :error, message: msg)
+        error(exception)
+      else
+        raise exception
       end
     end
 

@@ -29,17 +29,8 @@ module NatsListener
         begin
           around_call(msg, reply, subject)
         rescue StandardError => exception
-          on_rescue(exception)
+          client.on_rescue(exception)
         end
-      end
-    end
-
-    def on_rescue(exception)
-      if client.catch_errors
-        client.log(action: :error, message: msg)
-        client.catch_provider.error(exception) if client.catch_provider
-      else
-        raise exception
       end
     end
 
