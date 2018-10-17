@@ -13,7 +13,7 @@ RSpec.describe NatsListener::ClientCatcher do
     }
   end
 
-  describe '.current' do
+  describe '.initialize' do
     subject { described_class.new(opts) }
 
     context 'with catch_errors' do
