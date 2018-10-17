@@ -3,6 +3,7 @@ require_relative './abstract_client'
 
 module NatsListener
   class Client < AbstractClient
+    # @!method Accessor to singleton object of nats client
     def self.current
       @current ||= NatsListener::Client.new
     end
@@ -12,11 +13,11 @@ module NatsListener
     end
 
     # Use this opts:
-    # @!attribute logger - logger used in this service
-    # @!attribute skip - flag attribute used to skip connections(useful for testing)
-    # @!attribute catch_errors - used to catch errors around subscribers/connections(be careful with it!)
-    # @!attribute catch_provider - this class will be called with catch_provider.error(e)
-    # @!attribute disable_nats - if something is passed to that attribute - nats won't be initialized
+    # @!attribute :logger - logger used in this service
+    # @!attribute :skip - flag attribute used to skip connections(useful for testing)
+    # @!attribute :catch_errors - used to catch errors around subscribers/connections(be careful with it!)
+    # @!attribute :catch_provider - this class will be called with catch_provider.error(e)
+    # @!attribute :disable_nats - if something is passed to that attribute - nats won't be initialized
 
     def initialize(opts = {})
       @nats = ::NATS::IO::Client.new unless opts[:disable_nats] # Create nats client
@@ -26,6 +27,9 @@ module NatsListener
       @catch_provider = opts[:catch_provider]
     end
 
+    # @!method Establish connection with nats server
+    # @!attribute :service_name - Name of current service
+    # @!attribute :nats - configuration of nats service
     def establish_connection(config)
       return if skip
       @nats.connect(config) # Connect nats to provided configuration
