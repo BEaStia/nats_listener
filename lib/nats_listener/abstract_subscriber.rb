@@ -36,12 +36,17 @@ module NatsListener
 
     def around_call(msg, reply, subject)
       client.log(action: :received, message: msg)
-      if @count.positive? || @infinitive
+      if should_call?
         call(msg, reply, subject)
         @count -= 1 unless @infinitive
+        destroy if @count == 0
       else
         destroy
       end
+    end
+
+    def should_call?
+      @count.positive? || @infinitive
     end
 
     def destroy
