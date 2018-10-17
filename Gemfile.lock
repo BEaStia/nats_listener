@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    nats_listener (0.1.0)
+    nats_listener (0.1.1)
       google-protobuf (~> 3.6)
       nats-pure (~> 0.5)
       nats-streaming (~> 0.2)
@@ -15,7 +15,7 @@ GEM
       url
     diff-lcs (1.3)
     docile (1.3.1)
-    google-protobuf (3.6.1)
+    google-protobuf (3.6.1-universal-darwin)
     json (2.1.0)
     nats-pure (0.5.0)
     nats-streaming (0.2.2)
@@ -53,7 +53,7 @@ DEPENDENCIES
   nats_listener!
   rake (~> 10.0)
   rspec (~> 3.0)
-  rspec_junit_formatter
+  rspec_junit_formatter (= 0.4.1)
 
 BUNDLED WITH
    1.16.1
