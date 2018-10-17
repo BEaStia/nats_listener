@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'google/protobuf'
 
 Google::Protobuf::DescriptorPool.generated_pool.build do
@@ -10,6 +12,10 @@ Google::Protobuf::DescriptorPool.generated_pool.build do
   end
 end
 
+# Message class offered to be used with protobuf serialization
 module NatsListener
-  NatsMessage = Google::Protobuf::DescriptorPool.generated_pool.lookup('NatsListener.NatsMessage').msgclass
+  MESSAGE_CLASS = 'NatsListener.NatsMessage'
+  NatsMessage = Google::Protobuf::DescriptorPool.generated_pool
+                                                .lookup(MESSAGE_CLASS)
+                                                .msgclass
 end

@@ -35,7 +35,12 @@ RSpec.describe NatsListener::StreamingClient do
     let(:service_name) { 'service_1' }
     let(:client) do
       client = described_class.new
-      client.establish_connection(client_id: 'client_id', service_name: 'client_id', nats: { servers: ['nats://127.0.0.1:4223']})
+      client.establish_connection(
+        client_id: 'client_id',
+        cluster_name: 'cluster_name',
+        service_name: 'client_id',
+        nats: { servers: ['nats://127.0.0.1:4223']}
+      )
       client
     end
     let(:topic) { 'topic' }

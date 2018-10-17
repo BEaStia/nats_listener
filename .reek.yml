@@ -1,0 +1,14 @@
+detectors:
+  NilCheck:
+    enabled: false
+
+  TooManyStatements:
+    max_statements: 10
+
+  TooManyInstanceVariables:
+    enabled: false
+
+  IrresponsibleModule:
+    enabled: false
+  UtilityFunction:
+    enabled: false

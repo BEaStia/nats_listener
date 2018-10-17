@@ -12,7 +12,7 @@ jobs:
         - "4222:4222"
 
     - image: nats-streaming
-      command: "--store memory --cluster_id client_id -p 4223"
+      command: "--store memory --cluster_id cluster_name -p 4223"
       ports:
         - "4223:4222"
     working_directory: ~/repo

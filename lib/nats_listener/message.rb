@@ -1,4 +1,7 @@
+# frozen_string_literal: true
+
 module NatsListener
+  # Message class offered to be used with json serialization
   class Message
     attr_reader :message
 

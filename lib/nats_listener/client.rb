@@ -1,15 +1,14 @@
+# frozen_string_literal: true
+
 require 'nats/io/client'
 require_relative './abstract_client'
 
 module NatsListener
+  # Client for nats implementation
   class Client < AbstractClient
     # @!method Accessor to singleton object of nats client
     def self.current
       @current ||= NatsListener::Client.new
-    end
-
-    class << self
-      attr_writer :current
     end
 
     # Use this opts:
@@ -21,33 +20,36 @@ module NatsListener
 
     def initialize(opts = {})
       @nats = ::NATS::IO::Client.new unless opts[:disable_nats] # Create nats client
-      @logger = opts[:logger]
+      @logger = ClientLogger.new(opts)
       @skip = opts[:skip] || false
-      @catch_errors = opts[:catch_errors] || false
-      @catch_provider = opts[:catch_provider]
+      @client_catcher = ClientCatcher.new(opts)
     end
 
     # @!method Establish connection with nats server
     # @!attribute :service_name - Name of current service
     # @!attribute :nats - configuration of nats service
-    def establish_connection(config)
+    def establish_connection(opts)
       return if skip
-      @nats.connect(config) # Connect nats to provided configuration
-      @service_name = config[:service_name]
+
+      @config = opts.to_h
+      begin
+        @nats.connect(config) # Connect nats to provided configuration
+        true
+      rescue StandardError => exception
+        log(action: :connection_failed, message: exception)
+        false
+      end
     end
 
     def request(subject, message, opts = {})
       with_connection do
         log(action: :request, message: message)
-        @nats.request(subject, message, opts)
+        nats.request(subject, message, opts)
       end
     end
 
     def reestablish_connection
-      if @nats.status.zero?
-        servers = ENV.fetch('NATS_SERVERS', 'nats://127.0.0.1:4222').split(',')
-        establish_connection(servers: servers)
-      end
+      establish_connection(config) if nats&.status.to_i.zero?
     end
   end
 end
