@@ -1,5 +1,8 @@
 # NatsListener
 
+[![Maintainability](https://api.codeclimate.com/v1/badges/8d3fc10f0adfda052efb/maintainability)](https://codeclimate.com/github/BEaStia/nats_listener/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/8d3fc10f0adfda052efb/test_coverage)](https://codeclimate.com/github/BEaStia/nats_listener/test_coverage)
+
 ## Installation
 
 Add this line to your application's Gemfile:
