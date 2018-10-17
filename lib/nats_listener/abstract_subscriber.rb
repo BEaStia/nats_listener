@@ -28,6 +28,7 @@ module NatsListener
       @sid = client.subscribe(@subject, opts) do |msg, reply, subject|
         begin
           around_call(msg, reply, subject)
+          destroy unless should_call?
         rescue StandardError => exception
           client.on_rescue(exception)
         end
@@ -39,9 +40,6 @@ module NatsListener
       if should_call?
         call(msg, reply, subject)
         @count -= 1 unless @infinitive
-        destroy if @count == 0
-      else
-        destroy
       end
     end
 
