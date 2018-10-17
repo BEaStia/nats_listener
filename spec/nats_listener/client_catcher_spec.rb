@@ -38,6 +38,7 @@ RSpec.describe NatsListener::ClientCatcher do
     subject { catcher.call(exception) }
 
     context 'with enabled error catching' do
+
       it 'should call error method' do
         expect(catch_provider).to receive(:error)
         subject
