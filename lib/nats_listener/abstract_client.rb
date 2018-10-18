@@ -31,8 +31,10 @@ module NatsListener
       begin
         reestablish_connection
         yield
+        true
       rescue StandardError => exception
         on_rescue(exception)
+        false
       end
     end
 
