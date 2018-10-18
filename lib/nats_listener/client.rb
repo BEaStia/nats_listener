@@ -6,11 +6,6 @@ require_relative './abstract_client'
 module NatsListener
   # Client for nats implementation
   class Client < AbstractClient
-    # @!method Accessor to singleton object of nats client
-    def self.current
-      @current ||= NatsListener::Client.new
-    end
-
     # Use this opts:
     # @!attribute :logger - logger used in this service
     # @!attribute :skip - flag attribute used to skip connections(useful for testing)

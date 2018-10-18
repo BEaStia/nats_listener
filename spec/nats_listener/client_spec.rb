@@ -60,4 +60,27 @@ RSpec.describe NatsListener::Client do
       end
     end
   end
+
+  describe '#request' do
+    let(:service_name) { 'service_1' }
+    let(:client) do
+      client = described_class.new
+      client.establish_connection(
+          service_name: 'client_id',
+          nats: { servers: ['nats://127.0.0.1:4222']}
+      )
+      client
+    end
+    let(:topic) { 'topic' }
+
+    before do
+      allow_any_instance_of(::NATS::IO::Client).to receive(:connect).and_return(true)
+      allow_any_instance_of(::NATS::IO::Client).to receive(:request).and_return(true)
+    end
+    subject { client.request(topic, 'Hi, there!', {}) }
+
+    it 'should call #with_connection' do
+      expect { subject }.not_to raise_exception
+    end
+  end
 end

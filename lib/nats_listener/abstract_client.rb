@@ -6,6 +6,7 @@ require_relative './client_catcher'
 module NatsListener
   # Abstract client for nats and nats-streaming connections
   class AbstractClient
+    # @!method Accessor to singleton object of nats client
     def self.current
       @current ||= self.class.new
     end
