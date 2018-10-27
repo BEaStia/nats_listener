@@ -25,11 +25,14 @@ For usage in your project we offer:
 
 1. Create `initializer.rb` or manually call `NatsListener.current.establish_connection(service_name: [YOUR SERVICE NAME], servers: [NATS_SERVERS_URLS])`
 2. For publishing you can use `NatsListener.current.publish` serializing message with two strategies(`protobuf` and `json`).
+Json strategy is proposed in [https://github.com/beastia/nats_listener](nats_listener). Protobuf strategy is included into [https://github.com/beastia/nats_streaming_listener](nats_streming_listener).
 3. For receiving messages we offer subscribers
 
 #### Protobuf strategy
 ```ruby
-2.3.3 :006 > m = NatsListener::NatsMessage.new(sender_service_name: 'ololo', receiver_action_name: 'ololo1', receiver_action_parameters:[1,2,3].map(&:to_s), message_timestamp: Time.now.utc.to_i, transaction_id: 'unique')
+2.3.3 :006 > require 'nats_streaming_listener'
+=> true
+2.3.3 :006 > m = NatsStreaming::NatsMessage.new(sender_service_name: 'ololo', receiver_action_name: 'ololo1', receiver_action_parameters:[1,2,3].map(&:to_s), message_timestamp: Time.now.utc.to_i, transaction_id: 'unique')
  => #<NatsListener::NatsMessage sender_service_name="ololo" receiver_action_name="ololo1" receiver_action_parameters=["1", "2", "3"] message_timestamp=1538902717 transaction_id="unique"> 
 2.3.3 :007 > m.serialize
  => "\n\x05ololo\x12\x06ololo1\x1A\x011\x1A\x012\x1A\x013 \xBD\x95\xE7\xDD\x05*\x06unique" 
