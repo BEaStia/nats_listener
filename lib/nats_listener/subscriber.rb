@@ -1,6 +1,9 @@
 # frozen_string_literal: true
+
 require_relative './abstract_subscriber'
+
 module NatsListener
+  # Base subscriber using nats
   class Subscriber < AbstractSubscriber
     # It's just a small example of subscriber usage:
     #
@@ -18,9 +21,10 @@ module NatsListener
     # And receive 'Hello, World test'
     # Next publish of this message won't show anything
     #
-
-    def client
-      NatsListener::Client.current
+    class << self
+      def client
+        NatsListener::Client.current
+      end
     end
   end
 end

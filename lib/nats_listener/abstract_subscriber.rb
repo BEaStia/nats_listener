@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 module NatsListener
+  # Abstract class for nats and nats-streaming subscriptions
   class AbstractSubscriber
     class << self
       # subject method is used to define subject for subscription
@@ -17,9 +18,13 @@ module NatsListener
       end
     end
 
-    def initialize(subj: nil, count: nil)
-      @subject = subj || self.class.const_get('SUBJECT')
-      @count = count || self.class.const_get('COUNT')
+    attr_reader :client, :sid
+
+    def initialize
+      klass = self.class
+      @subject = klass.const_get('SUBJECT')
+      @count = klass.const_get('COUNT')
+      @client = klass.client
       @infinitive = true if @count.zero?
     end
 
@@ -37,10 +42,10 @@ module NatsListener
 
     def around_call(msg, reply, subject)
       client.log(action: :received, message: msg)
-      if should_call?
-        call(msg, reply, subject)
-        @count -= 1 unless @infinitive
-      end
+      return unless should_call?
+
+      call(msg, reply, subject)
+      @count -= 1 unless @infinitive
     end
 
     def should_call?
@@ -48,9 +53,9 @@ module NatsListener
     end
 
     def destroy
-      client.unsubscribe(@sid)
+      client.unsubscribe(sid)
     end
 
-    def call(msg, reply, subject); end
+    def call(_msg, _reply, _subject); end
   end
 end

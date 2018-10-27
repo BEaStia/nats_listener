@@ -22,12 +22,29 @@ RSpec.describe NatsListener::StreamingClient do
     let(:service_name) { 'service_1' }
     let(:client) { described_class.new }
 
-    before { allow_any_instance_of(::STAN::Client).to receive(:connect).and_return(true) }
-
     subject { client.establish_connection(service_name: service_name) }
 
-    it 'should set service name' do
-      expect { subject }.to change { client.service_name }.from(nil)
+    context 'without errors' do
+      before { allow_any_instance_of(::STAN::Client).to receive(:connect).and_return(true) }
+
+      it 'should set service name' do
+        expect { subject }.to change { client.service_name }.from(nil)
+      end
+
+      it 'should return true' do
+        expect(subject).to be_truthy
+      end
+    end
+
+    context 'with received error' do
+      before do
+        allow_any_instance_of(::STAN::Client).to receive(:connect).and_raise(StandardError.new)
+        allow(client).to receive(:log).and_return(true)
+      end
+
+      it 'should raise error' do
+        expect(subject).to be_falsey
+      end
     end
   end
 
@@ -35,7 +52,12 @@ RSpec.describe NatsListener::StreamingClient do
     let(:service_name) { 'service_1' }
     let(:client) do
       client = described_class.new
-      client.establish_connection(client_id: 'client_id', service_name: 'client_id', nats: { servers: ['nats://127.0.0.1:4223']})
+      client.establish_connection(
+        client_id: 'client_id',
+        cluster_name: 'cluster_name',
+        service_name: 'client_id',
+        nats: { servers: ['nats://127.0.0.1:4223']}
+      )
       client
     end
     let(:topic) { 'topic' }
@@ -57,6 +79,31 @@ RSpec.describe NatsListener::StreamingClient do
       it 'should subscribe' do
         expect(subject).to be_truthy
       end
+    end
+  end
+
+  describe '#request' do
+    let(:service_name) { 'service_1' }
+    let(:client) do
+      client = described_class.new
+      client.establish_connection(
+        client_id: 'client_id',
+        cluster_name: 'cluster_name',
+        service_name: 'client_id',
+        nats: { servers: ['nats://127.0.0.1:4223']}
+      )
+      client
+    end
+    let(:topic) { 'topic' }
+
+    before do
+      allow_any_instance_of(::STAN::Client).to receive(:connect).and_return(true)
+      allow_any_instance_of(::STAN::Client).to receive(:request).and_return(true)
+    end
+    subject { client.request(topic, 'Hi, there!', {}) }
+
+    it 'should call #with_connection' do
+      expect { subject }.not_to raise_exception
     end
   end
 end

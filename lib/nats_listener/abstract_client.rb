@@ -1,32 +1,46 @@
-module NatsListener
-  class AbstractClient
-    attr_reader :service_name, :logger, :skip, :catch_errors, :catch_provider, :nats
+# frozen_string_literal: true
 
-    def log(action:, message:)
-      logger.info(service: service_name, action: action, message: message) if logger
+require_relative './client_logger'
+require_relative './client_catcher'
+
+module NatsListener
+  # Abstract client for nats and nats-streaming connections
+  class AbstractClient
+    # @!method Accessor to singleton object of nats client
+    def self.current
+      @current ||= self.class.new
     end
 
-    def error(exception)
-      client.catch_provider.error(exception) if client.catch_provider
+    def self.current=(value)
+      @current = value
+    end
+
+    attr_reader :logger, :skip, :nats, :config, :client_catcher
+
+    def log(action:, message:)
+      logger.log(
+        action: action,
+        message: message,
+        service_name: service_name
+      )
     end
 
     def with_connection
       return if skip
+
       begin
         reestablish_connection
         yield
+        true
       rescue StandardError => exception
         on_rescue(exception)
+        false
       end
     end
 
     def on_rescue(exception)
-      if catch_errors
-        log(action: :error, message: msg)
-        error(exception)
-      else
-        raise exception
-      end
+      log(action: :error, message: exception)
+      client_catcher.call(exception)
     end
 
     # Raw method to publish subject to data
@@ -49,6 +63,12 @@ module NatsListener
       with_connection do
         nats.unsubscribe(sid)
       end
+    end
+
+    def service_name
+      return unless config
+
+      config.fetch(:service_name) { :service_name }
     end
   end
 end

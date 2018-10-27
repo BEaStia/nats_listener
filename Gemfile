@@ -6,3 +6,5 @@ git_source(:github) {|repo_name| "https://github.com/#{repo_name}" }
 gemspec
 
 gem 'codecov', :require => false, :group => :test
+gem 'reek', require: false, group: :test
+gem 'rubocop', require: false, group: :test
