@@ -41,7 +41,7 @@ module NatsListener
     end
 
     def around_call(msg, reply, subject)
-      client.log(action: :received, message: msg.to_json)
+      client.log(action: :received, message: msg.to_s)
       return unless should_call?
 
       call(msg, reply, subject)
