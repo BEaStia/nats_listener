@@ -57,9 +57,7 @@ RSpec.describe NatsListener::Client do
   describe '#subscribe' do
     let(:service_name) { 'service_1' }
     let(:client) do
-      client = described_class.new
-      # client.establish_connection(service_name: service_name, services: 'nats://localhost:4222')
-      client
+      described_class.new
     end
     let(:topic) { 'topic' }
 

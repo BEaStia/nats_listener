@@ -1,11 +1,11 @@
 # frozen_string_literal: true
 
 require 'nats/io/client'
-require_relative './abstract_client'
+require 'nats_listener_core'
 
 module NatsListener
   # Client for nats implementation
-  class Client < AbstractClient
+  class Client < NatsListenerCore::AbstractClient
     # Use this opts:
     # @!attribute :logger - logger used in this service
     # @!attribute :skip - flag attribute used to skip connections(useful for testing)
@@ -15,9 +15,9 @@ module NatsListener
 
     def initialize(opts = {})
       @nats = ::NATS::IO::Client.new unless opts[:disable_nats] # Create nats client
-      @logger = ClientLogger.new(opts)
+      @logger =  NatsListenerCore::ClientLogger.new(opts)
       @skip = opts[:skip] || false
-      @client_catcher = ClientCatcher.new(opts)
+      @client_catcher =  NatsListenerCore::ClientCatcher.new(opts)
     end
 
     # @!method Establish connection with nats server

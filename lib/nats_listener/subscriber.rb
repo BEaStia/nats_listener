@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative './abstract_subscriber'
+require 'nats_listener_core'
 
 module NatsListener
   # Base subscriber using nats
-  class Subscriber < AbstractSubscriber
+  class Subscriber <  NatsListenerCore::AbstractSubscriber
     # It's just a small example of subscriber usage:
     #
     # class TestSubscriber < Subscriber

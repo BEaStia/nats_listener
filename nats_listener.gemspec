@@ -41,6 +41,4 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rspec_junit_formatter', '0.4.1'
   spec.add_dependency 'nats-pure', '~> 0.5'
-  spec.add_dependency 'google-protobuf', '~> 3.6'
-  spec.add_dependency 'nats-streaming', '~> 0.2'
 end
