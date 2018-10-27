@@ -3,7 +3,7 @@ require 'spec_helper'
 RSpec.describe NatsListener::AbstractClient do
   describe '#with_connection' do
     let(:client_catcher) do
-      double(call: ->(exception) { true })
+      double(call: ->(_e) { true })
     end
     let(:client) do
       client = described_class.new

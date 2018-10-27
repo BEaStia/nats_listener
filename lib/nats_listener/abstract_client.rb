@@ -21,8 +21,8 @@ module NatsListener
       logger.log(
         action: action,
         message: message,
-        service_name: service_name,
-        )
+        service_name: service_name
+      )
     end
 
     def with_connection

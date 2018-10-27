@@ -6,7 +6,6 @@ require_relative './abstract_client'
 module NatsListener
   # Implementation of Nats-streaming client
   class StreamingClient < AbstractClient
-
     # Use this opts:
     # @!attribute :logger - logger used in this service
     # @!attribute :skip - flag attribute used to skip connections(useful for testing)
