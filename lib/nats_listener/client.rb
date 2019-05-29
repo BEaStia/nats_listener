@@ -36,10 +36,10 @@ module NatsListener
       end
     end
 
-    def request(subject, message, opts = {})
+    def request(subject, message, opts = {}, &blk)
       with_connection do
         log(action: :request, message: message)
-        nats.request(subject, message, opts)
+        nats.request(subject, message, opts, &blk)
       end
     end
 

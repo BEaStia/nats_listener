@@ -94,14 +94,41 @@ RSpec.describe NatsListener::Client do
     end
     let(:topic) { 'topic' }
 
-    before do
-      allow_any_instance_of(::NATS::IO::Client).to receive(:connect).and_return(true)
-      allow_any_instance_of(::NATS::IO::Client).to receive(:request).and_return(true)
-    end
-    subject { client.request(topic, 'Hi, there!', {}) }
+    context 'with mock' do
+      before do
+        allow_any_instance_of(::NATS::IO::Client).to receive(:connect).and_return(true)
+        allow_any_instance_of(::NATS::IO::Client).to receive(:request).and_return(true)
+      end
+      subject { client.request(topic, 'Hi, there!', {}) {|x| p x} }
 
-    it 'should call #with_connection' do
-      expect { subject }.not_to raise_exception
+      it 'should call #with_connection' do
+        expect { subject }.not_to raise_exception
+      end
+    end
+
+    context 'with real connection' do
+      let(:messager) { double }
+
+      subject { client.request(topic, 'Hi, there!', {}) {|x| messager.notify(x)} }
+
+      before do
+        allow(messager).to receive(:notify).with('request_packet:response_packet').and_return(true)
+      end
+
+      it 'should call #with_connection' do
+        expect { subject }.not_to raise_exception
+      end
+
+      it 'should print message' do
+        client.subscribe(topic, {}) do |msg, reply, _subject|
+          client.publish(reply, "#{msg}:response_packet")
+        end
+
+        client.request(topic, 'request_packet', max: 5) { |response| messager.notify(response) }
+
+        sleep(1)
+
+      end
     end
   end
 end
