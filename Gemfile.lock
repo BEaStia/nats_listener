@@ -3,7 +3,6 @@ PATH
   specs:
     nats_listener (0.1.1)
       nats-pure (~> 0.5)
-    nats_listener_core (0.1.1)
 
 GEM
   remote: https://rubygems.org/
@@ -28,9 +27,10 @@ GEM
     equalizer (0.0.11)
     ice_nine (0.11.2)
     jaro_winkler (1.5.2)
-    json (2.2.0)
+    json (2.3.1)
     kwalify (0.7.2)
     nats-pure (0.5.0)
+    nats_listener_core (0.1.1)
     parallel (1.17.0)
     parser (2.6.3.0)
       ast (~> 2.4.0)
